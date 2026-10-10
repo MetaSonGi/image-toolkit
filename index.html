@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>이미지 편집 스튜디오</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>🖼️ 이미지 편집 스튜디오</h1>
+    <p class="sub">비율 변환 · 자르기 · 배경 제거 — 전부 브라우저 안에서, 서버 전송 없음</p>
+  </div>
+</header>
+
+<section class="panel drop-panel">
+  <div id="dropZone" class="drop-zone">
+    <div class="drop-icon">📥</div>
+    <p><b>이미지를 드래그</b>하거나 클릭해서 선택</p>
+    <p class="hint">JPG / PNG / WebP</p>
+    <input type="file" id="fileInput" accept="image/*" hidden />
+  </div>
+  <div class="src-row">
+    <button id="sampleBtn" class="btn ghost">🎨 샘플 이미지로 체험</button>
+    <span id="srcInfo" class="src-info">이미지를 넣어주세요</span>
+  </div>
+</section>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="aspect">📐 비율 변환</button>
+  <button class="tab" data-tab="crop">✂️ 자르기</button>
+  <button class="tab" data-tab="bg">🧽 배경 제거</button>
+</nav>
+
+<main>
+  <!-- ============ 비율 변환 ============ -->
+  <section id="tab-aspect" class="tab-panel active">
+    <div class="controls">
+      <div class="ctl">
+        <label>목표 비율</label>
+        <div class="ratio-btns" id="ratioBtns">
+          <button data-w="1" data-h="1">1:1</button>
+          <button data-w="4" data-h="3">4:3</button>
+          <button data-w="3" data-h="2">3:2</button>
+          <button data-w="16" data-h="9" class="on">16:9</button>
+          <button data-w="9" data-h="16">9:16</button>
+          <button data-w="21" data-h="9">21:9</button>
+        </div>
+        <div class="custom-ratio">
+          직접입력 <input type="number" id="crW" value="16" min="1" max="100" /> :
+          <input type="number" id="crH" value="9" min="1" max="100" />
+          <button id="crApply" class="btn small">적용</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label>출력 크기 (너비 px)</label>
+        <input type="number" id="outW" value="1280" min="16" max="4096" step="1" />
+        <span class="dim" id="outHLabel">높이: 자동 계산</span>
+      </div>
+      <div class="ctl">
+        <label>빈 공간 채우기</label>
+        <select id="fitMode">
+          <option value="solid">단색으로 채우기</option>
+          <option value="blur">블러 배경으로 채우기</option>
+          <option value="mirror">거울 반사로 채우기</option>
+          <option value="cover">꽉 채우기 (잘라내기)</option>
+        </select>
+        <div class="color-row" id="solidRow">
+          <input type="color" id="fillColor" value="#111111" />
+          <span>채움 색상</span>
+        </div>
+      </div>
+      <div class="ctl">
+        <label>저장 형식</label>
+        <div class="fmt-row">
+          <select id="outFmt">
+            <option value="image/png">PNG</option>
+            <option value="image/jpeg">JPG</option>
+            <option value="image/webp">WebP</option>
+          </select>
+          <span id="qRow">품질 <input type="range" id="quality" min="10" max="100" value="90" /> <b id="qVal">90</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="preview-wrap"><canvas id="aspectCanvas"></canvas></div>
+    <button id="aspectDownload" class="btn primary big">⬇ 다운로드</button>
+  </section>
+
+  <!-- ============ 자르기 ============ -->
+  <section id="tab-crop" class="tab-panel">
+    <div class="sub-tabs">
+      <button class="sub-tab active" data-sub="free">자유 자르기</button>
+      <button class="sub-tab" data-sub="grid">격자 분할</button>
+      <button class="sub-tab" data-sub="shape">모양 자르기</button>
+    </div>
+
+    <div id="sub-free" class="sub-panel active">
+      <p class="hint">이미지 위를 드래그해서 영역을 선택하세요 (픽셀 단위 표시)</p>
+      <div class="preview-wrap"><canvas id="cropCanvas"></canvas></div>
+      <div class="coords" id="cropCoords">선택 영역: -</div>
+      <button id="cropDownload" class="btn primary">⬇ 선택 영역 다운로드 (PNG)</button>
+    </div>
+
+    <div id="sub-grid" class="sub-panel">
+      <div class="controls">
+        <div class="ctl"><label>행</label><input type="number" id="gridRows" value="2" min="1" max="10" /></div>
+        <div class="ctl"><label>열</label><input type="number" id="gridCols" value="2" min="1" max="10" /></div>
+        <div class="ctl"><label>저장 형식</label>
+          <select id="gridFmt"><option value="png">PNG</option><option value="jpeg">JPG</option></select>
+        </div>
+      </div>
+      <p class="hint">인스타 캐러셀·분할 포스터용으로 N×M 타일로 나눠 저장합니다</p>
+      <div class="preview-wrap"><canvas id="gridCanvas"></canvas></div>
+      <button id="gridDownload" class="btn primary">⬇ 타일 일괄 다운로드</button>
+    </div>
+
+    <div id="sub-shape" class="sub-panel">
+      <div class="controls">
+        <div class="ctl">
+          <label>모양</label>
+          <div class="ratio-btns" id="shapeBtns">
+            <button data-shape="circle" class="on">● 원형</button>
+            <button data-shape="rounded">▢ 둥근사각형</button>
+            <button data-shape="diamond">◇ 마름모</button>
+          </div>
+        </div>
+        <div class="ctl"><label>모서리 둥글기</label>
+          <input type="range" id="cornerR" min="0" max="50" value="20" /> <b id="cornerV">20%</b>
+        </div>
+      </div>
+      <div class="preview-wrap checker"><canvas id="shapeCanvas"></canvas></div>
+      <button id="shapeDownload" class="btn primary">⬇ 투명 PNG 다운로드</button>
+    </div>
+  </section>
+
+  <!-- ============ 배경 제거 ============ -->
+  <section id="tab-bg" class="tab-panel">
+    <div class="controls">
+      <div class="ctl">
+        <label>제거 방식</label>
+        <select id="bgMethod">
+          <option value="chroma">크로마키 (특정 색 제거)</option>
+          <option value="flood">코너 배경 제거 (가장자리부터)</option>
+        </select>
+      </div>
+      <div class="ctl" id="chromaCtl">
+        <label>제거할 색상</label>
+        <div class="color-row">
+          <input type="color" id="keyColor" value="#00ff00" />
+          <button id="pickColorBtn" class="btn small">🖱 이미지에서 직접 선택</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label>허용 오차 <b id="tolVal">60</b></label>
+        <input type="range" id="tolerance" min="10" max="200" value="60" />
+      </div>
+    </div>
+    <p class="hint" id="pickHint" style="display:none">이미지를 클릭하면 그 픽셀의 색상이 선택됩니다</p>
+    <div class="preview-wrap checker"><canvas id="bgCanvas"></canvas></div>
+    <div class="btn-row">
+      <button id="bgApply" class="btn primary">🧽 배경 제거 실행</button>
+      <button id="bgDownload" class="btn">⬇ 투명 PNG 다운로드</button>
+    </div>
+  </section>
+</main>
+
+<footer>100% 클라이언트 사이드 — 이미지가 서버로 전송되지 않습니다</footer>
+<script src="app.js"></script>
+</body>
+</html>
