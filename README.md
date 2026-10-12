@@ -1,8 +1,16 @@
-# 이미지 편집 스튜디오
+# 🖼️ 이미지 편집 스튜디오 | Image Toolkit
+
+> 비율 변환·자르기·격자 분할·배경 제거 이미지 스튜디오  
+> Image editing studio: crop, split, ratio convert, background removal
+
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen?style=flat-square)](https://metasongi.github.io/image-toolkit/) ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square)
+
+🌐 **Live:** https://metasongi.github.io/image-toolkit/
+
+---
 
 자주 쓰는 이미지 편집 기능을 브라우저에서 바로 — 서버 전송 없음.
 
-🌐 **바로 실행:** https://metasongi.github.io/image-toolkit/
 
 ## 기능
 
@@ -25,3 +33,9 @@
 
 - Vanilla JS + Canvas 2D
 - 100% 클라이언트 사이드
+
+---
+
+## English Summary
+
+Image editing studio: crop, split, ratio convert, background removal.
