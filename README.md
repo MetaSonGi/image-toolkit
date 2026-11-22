@@ -11,6 +11,16 @@
 
 자주 쓰는 이미지 편집 기능을 브라우저에서 바로 — 서버 전송 없음.
 
+## 함께 들어 있는 프로젝트
+
+비슷한 기능의 저장소를 이 저장소 하나로 합쳤습니다. 폴더마다 따로 실행되며, 실행 방법은 각 폴더의 README에 있습니다.
+
+| 폴더 | 원래 저장소 | 내용 |
+|---|---|---|
+| `/` (루트) | image-toolkit | 비율 변환·자르기·격자 분할·배경 제거 |
+| [`compressor/`](compressor/) | [image-compressor](https://github.com/MetaSonGi/image-compressor) | 이미지 용량 줄이기·포맷 변환 · [바로 실행](https://metasongi.github.io/image-toolkit/compressor/) |
+
+원래 저장소는 보관(archive) 처리되어 읽기 전용입니다. 합치기 전 커밋 기록도 그대로 남아 있습니다 (`git log -- <폴더>`).
 
 ## 기능
 

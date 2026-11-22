@@ -1,5 +1,8 @@
 # 🗜️ 이미지 압축기 | Image Compressor
 
+> 📦 이 폴더는 [image-toolkit](https://github.com/MetaSonGi/image-toolkit) 저장소로 통합되었습니다 (원래 저장소: image-compressor, 보관됨).
+
+
 > 일괄 압축 — WebP/JPG/PNG 변환, 품질·크기 조절  
 > Batch image compression with quality and size control
 
